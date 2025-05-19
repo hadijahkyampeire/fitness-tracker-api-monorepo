@@ -12,6 +12,7 @@
 
     <modules>
         <module>user-service</module>
+        <module>workout_service</module>
     </modules>
 
     <dependencyManagement>
