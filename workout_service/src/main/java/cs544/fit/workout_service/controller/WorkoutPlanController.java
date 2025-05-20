@@ -3,10 +3,13 @@ package cs544.fit.workout_service.controller;
 import cs544.fit.workout_service.dto.WorkoutPlanDTO;
 import cs544.fit.workout_service.service.WorkoutPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/workouts")
@@ -27,7 +30,7 @@ public class WorkoutPlanController {
         return ResponseEntity.ok(planService.getAllPlans());
     }
 
-    // ACCESSED ONLY BY ADMIN AND USER
+    // ACCESSED ONLY BY ADMIN, COACH, AND USER
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<WorkoutPlanDTO>> getPlansByUser(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok(planService.getPlansByUser(userId));
@@ -63,10 +66,14 @@ public class WorkoutPlanController {
 
     // ACCESSED BY ADMIN AND COACH
     @PutMapping("/{id}")
-    public ResponseEntity<WorkoutPlanDTO> updatePlan(@PathVariable("id") Long id, @RequestBody WorkoutPlanDTO dto) {
-        return planService.updatePlan(id, dto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> updatePlan(@PathVariable("id") Long id, @RequestBody WorkoutPlanDTO dto) {
+        Optional<WorkoutPlanDTO> result = planService.updatePlan(id, dto);
+        if (result.isPresent()) {
+            return ResponseEntity.ok(result.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Access denied or not found"));
+        }
     }
 
     // ACCESSED BY ADMIN, COACH AND USER

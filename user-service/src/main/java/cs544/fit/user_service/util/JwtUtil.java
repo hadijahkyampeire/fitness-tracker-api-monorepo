@@ -1,5 +1,6 @@
 package cs544.fit.user_service.util;
 
+import cs544.fit.user_service.security.MyUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,27 +27,31 @@ public class JwtUtil {
 
     private final UserDetailsService userDetailsService;
 
-    @Autowired
-    public JwtUtil(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
     @PostConstruct
     public void initKey() {
         // Only called once at startup — secure key
         this.secret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("type", "access");
-        return doGenerateToken(claims, userDetails.getUsername(), expiration);
+    @Autowired
+    public JwtUtil(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
-    public String generateRefreshToken(UserDetails userDetails) {
+    public String generateToken(String email, Long userId, String roleName) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "access");
+        claims.put("userId", userId);
+        claims.put("role", roleName);
+        return doGenerateToken(claims, email, expiration);
+    }
+
+    public String generateRefreshToken(String email, Long userId, String roleName) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "refresh");
-        return doGenerateToken(claims, userDetails.getUsername(), refreshExpiration);
+        claims.put("userId", userId);
+        claims.put("role", roleName);
+        return doGenerateToken(claims, email, refreshExpiration);
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject, long expirationSeconds) {

@@ -69,14 +69,8 @@ public class AuthService implements IAuthService {
         User user = userRepo.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password"));
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()))
-        );
-
-        String accessToken = jwtUtil.generateToken(userDetails);
-        String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+        String accessToken = jwtUtil.generateToken(user.getEmail(),user.getId(), user.getRole().getName());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail(),user.getId(), user.getRole().getName());
 
         return new LoginResponse(
                 accessToken,

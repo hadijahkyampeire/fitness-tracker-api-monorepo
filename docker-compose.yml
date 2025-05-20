@@ -1,0 +1,45 @@
+#version: '3.8'
+#
+#services:
+#  postgres:
+#    image: postgres:15
+#    container_name: postgres
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 1
+#      POSTGRES_DB: postgres  # Required, but we will override it with init script
+#    volumes:
+#      - ./postgres/init:/docker-entrypoint-initdb.d  # Mount init scripts
+#    networks:
+#      - fit-network
+#
+#  user-service:
+#    build:
+#      context: .
+#      dockerfile: user-service/Dockerfile
+#    container_name: user-service
+#    ports:
+#      - "8081:8081"
+#    depends_on:
+#      - postgres
+#    networks:
+#      - fit-network
+#
+#  workout-service:
+#    build:
+#      context: .
+#      dockerfile: workout_service/Dockerfile
+#    container_name: workout_service
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - postgres
+#      - user-service
+#    networks:
+#      - fit-network
+#
+#networks:
+#  fit-network:
+#    driver: bridge

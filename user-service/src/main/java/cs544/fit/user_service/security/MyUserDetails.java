@@ -1,6 +1,7 @@
 package cs544.fit.user_service.security;
 import cs544.fit.user_service.entity.Role;
 import cs544.fit.user_service.entity.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,8 @@ public class MyUserDetails implements UserDetails {
     private String email;
     private String password;
     private Role role;
+    @Getter
+    private Long userId;
 
     public MyUserDetails() {
     }
@@ -19,6 +22,7 @@ public class MyUserDetails implements UserDetails {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.role = user.getRole();
+        this.userId = user.getId();
     }
 
     @Override
@@ -55,4 +59,9 @@ public class MyUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public String getRole() {
+        return role.getName(); // Assuming `Role` has a `getName()` method
+    }
+
 }

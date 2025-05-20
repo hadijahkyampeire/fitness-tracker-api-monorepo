@@ -6,6 +6,8 @@ import cs544.fit.workout_service.repository.WorkoutCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +19,13 @@ public class WorkoutCategoryController {
     @Autowired
     private WorkoutCategoryRepository categoryRepository;
 
-    // ACCESSED ONLY BY ADMIN AND COACH
+    public String getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
+    }
+
+
+    // ACCESSED ONLY BY ADMIN
     @PostMapping
     public ResponseEntity<?> create(@RequestBody WorkoutCategoryDTO dto) {
         try {
@@ -49,7 +57,7 @@ public class WorkoutCategoryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ACCESSED ONLY BY ADMIN AND COACH
+    // ACCESSED ONLY BY ADMIN
     @PutMapping("/{id}")
     public ResponseEntity<WorkoutCategoryDTO> update(@PathVariable("id") Long id, @RequestBody WorkoutCategoryDTO dto) {
         return categoryRepository.findById(id)
@@ -62,7 +70,7 @@ public class WorkoutCategoryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ACCESSED ONLY BY ADMIN AND COACH
+    // ACCESSED ONLY BY ADMIN
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         if (categoryRepository.existsById(id)) {
