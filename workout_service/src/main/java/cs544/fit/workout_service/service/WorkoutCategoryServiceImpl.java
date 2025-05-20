@@ -60,16 +60,9 @@ public class WorkoutCategoryServiceImpl implements WorkoutCategoryService {
     }
 
     private WorkoutCategoryDTO toDTO(WorkoutCategory category) {
-        List<String> workoutPlanNames = category.getWorkoutPlans() != null
-                ? category.getWorkoutPlans().stream()
-                .map(WorkoutPlan::getTitle)
-                .toList()
-                : List.of();
-
         return new WorkoutCategoryDTO(
                 category.getId(),
                 category.getName(),
-                category.getDescription(),
-                workoutPlanNames);
+                category.getDescription());
     }
 }
