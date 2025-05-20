@@ -1,5 +1,6 @@
 package cs544.fit.workout_service.service;
 
+import cs544.fit.workout_service.dto.WorkoutCategoryDTO;
 import cs544.fit.workout_service.dto.WorkoutPlanDTO;
 import cs544.fit.workout_service.entity.WorkoutCategory;
 import cs544.fit.workout_service.entity.WorkoutPlan;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,6 +73,43 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
     @Override
     public void deletePlan(Long id) {
         planRepository.deleteById(id);
+    }
+
+    @Override
+    public List<WorkoutPlanDTO> getAllPlans() {
+        return planRepository.findAll().stream()
+                .map(this::toDTO).toList();
+    }
+
+    @Override
+    public Optional<WorkoutPlanDTO> updatePlan(Long id, WorkoutPlanDTO dto) {
+        return planRepository.findById(id)
+                .map(existingPlan -> {
+                    existingPlan.setUserId(dto.userId());
+                    existingPlan.setTitle(dto.title());
+                    existingPlan.setDescription(dto.description());
+                    existingPlan.setEstimatedCalories(dto.estimatedCalories());
+                    existingPlan.setDurationMinutes(dto.durationMinutes());
+                    existingPlan.setLevel(dto.level());
+
+                    if (dto.categoryId() != null) {
+                        WorkoutCategory category = categoryRepository.findById(dto.categoryId())
+                                .orElse(null);
+                        existingPlan.setCategory(category);
+                    } else {
+                        existingPlan.setCategory(null);
+                    }
+
+                    WorkoutPlan updated = planRepository.save(existingPlan);
+                    return toDTO(updated);
+                });
+    }
+
+    public List<WorkoutPlanDTO> getPlansByCategory(Long categoryId) {
+        return planRepository.findAllByCategoryId(categoryId)
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     private WorkoutPlanDTO toDTO(WorkoutPlan plan) {

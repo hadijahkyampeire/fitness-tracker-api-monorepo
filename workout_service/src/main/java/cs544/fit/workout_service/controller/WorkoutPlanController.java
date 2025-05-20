@@ -9,54 +9,74 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/plans")
+@RequestMapping("/api/workouts")
 public class WorkoutPlanController {
 
-    private final WorkoutPlanService planService;
+    @Autowired
+    private WorkoutPlanService planService;
 
-    public WorkoutPlanController(WorkoutPlanService planService) {
-        this.planService = planService;
-    }
-
+    // ACCESSED BY ADMIN AND COACH
     @PostMapping
     public ResponseEntity<WorkoutPlanDTO> createPlan(@RequestBody WorkoutPlanDTO dto) {
         return ResponseEntity.ok(planService.createPlan(dto));
     }
 
+    // ACCESSED BY ADMIN, COACH AND USER
     @GetMapping
-    public List<WorkoutPlanDTO> getUserPlans(@RequestParam Long userId) {
-        return planService.getPlansByUser(userId);
+    public ResponseEntity<List<WorkoutPlanDTO>> getPlans() {
+        return ResponseEntity.ok(planService.getAllPlans());
     }
 
+    // ACCESSED ONLY BY ADMIN AND USER
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<WorkoutPlanDTO>> getPlansByUser(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok(planService.getPlansByUser(userId));
+    }
+
+    // ACCESSED BY ADMIN, COACH AND USER
     @GetMapping("/{id}")
-    public ResponseEntity<WorkoutPlanDTO> getPlan(@PathVariable Long id) {
+    public ResponseEntity<WorkoutPlanDTO> getPlan(@PathVariable("id") Long id) {
         return ResponseEntity.ok(planService.getPlan(id));
     }
 
+    // ACCESSED ONLY BY ADMIN AND COACH
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePlan(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePlan(@PathVariable("id") Long id) {
         planService.deletePlan(id);
-        return ResponseEntity.ok("Workout plan deleted");
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<WorkoutPlanDTO>> getPlansByUser(@PathVariable Long userId) {
-        List<WorkoutPlanDTO> plans = planService.getPlansByUser(userId);
-        return ResponseEntity.ok(plans);
-    }
-
+    // ACCESSED BY ADMIN, COACH AND USER
     @GetMapping("/level/{level}")
-    public ResponseEntity<List<WorkoutPlanDTO>> getPlansByLevel(@PathVariable String level) {
-        List<WorkoutPlanDTO> plans = planService.getPlansByLevel(level);
-        return ResponseEntity.ok(plans);
+    public ResponseEntity<List<WorkoutPlanDTO>> getPlansByLevel(@PathVariable("level") String level) {
+        return ResponseEntity.ok(planService.getPlansByLevel(level));
     }
 
+    // ACCESSED BY ADMIN, COACH AND USER
     @GetMapping("/user/{userId}/level/{level}")
     public ResponseEntity<List<WorkoutPlanDTO>> getPlansByUserAndLevel(
-            @PathVariable Long userId,
-            @PathVariable String level
+            @PathVariable("userId") Long userId,
+            @PathVariable("level") String level
     ) {
-        List<WorkoutPlanDTO> plans = planService.getPlansByUserAndLevel(userId, level);
-        return ResponseEntity.ok(plans);
+        return ResponseEntity.ok(planService.getPlansByUserAndLevel(userId, level));
+    }
+
+    // ACCESSED BY ADMIN AND COACH
+    @PutMapping("/{id}")
+    public ResponseEntity<WorkoutPlanDTO> updatePlan(@PathVariable("id") Long id, @RequestBody WorkoutPlanDTO dto) {
+        return planService.updatePlan(id, dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // ACCESSED BY ADMIN, COACH AND USER
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<WorkoutPlanDTO>> getByCategory(
+            @PathVariable("categoryId") Long categoryId) {
+        List<WorkoutPlanDTO> list = planService.getPlansByCategory(categoryId);
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(list);
     }
 }

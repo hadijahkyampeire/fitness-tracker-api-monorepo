@@ -14,7 +14,8 @@ public class WorkoutCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name; // e.g., "Cardio", "Strength", "Flexibility"
+    @Column(unique = true)
+    private String name;
     private String description;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
