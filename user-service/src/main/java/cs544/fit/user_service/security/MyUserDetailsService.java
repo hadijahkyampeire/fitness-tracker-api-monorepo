@@ -24,10 +24,6 @@ public class MyUserDetailsService implements UserDetailsService {
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(), // must be bcrypt hash
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()))
-        );
+        return new MyUserDetails(user);
     }
 }

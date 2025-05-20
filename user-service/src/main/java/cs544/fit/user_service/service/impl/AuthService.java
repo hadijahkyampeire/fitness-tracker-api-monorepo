@@ -1,12 +1,13 @@
 package cs544.fit.user_service.service.impl;
 
-import cs544.fit.user_service.dto.LoginRequest;
-import cs544.fit.user_service.dto.LoginResponse;
-import cs544.fit.user_service.dto.RegisterRequest;
-import cs544.fit.user_service.dto.RegisterResponse;
+import cs544.fit.user_service.dto.*;
+import cs544.fit.user_service.entity.CoachProfile;
 import cs544.fit.user_service.entity.Role;
 import cs544.fit.user_service.entity.User;
+import cs544.fit.user_service.entity.UserProfile;
+import cs544.fit.user_service.repository.CoachProfileRepo;
 import cs544.fit.user_service.repository.RoleRepo;
+import cs544.fit.user_service.repository.UserProfileRepo;
 import cs544.fit.user_service.repository.UserRepo;
 import cs544.fit.user_service.service.IAuthService;
 import cs544.fit.user_service.util.JwtUtil;
@@ -22,12 +23,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class AuthService implements IAuthService {
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private CoachProfileRepo coachProfileRepo;
+
+    @Autowired
+    private UserProfileRepo userProfileRepo;
 
     @Autowired
     private RoleRepo roleRepo;
@@ -69,14 +79,8 @@ public class AuthService implements IAuthService {
         User user = userRepo.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password"));
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()))
-        );
-
-        String accessToken = jwtUtil.generateToken(userDetails);
-        String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+        String accessToken = jwtUtil.generateToken(user.getEmail(),user.getId(), user.getRole().getName());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail(),user.getId(), user.getRole().getName());
 
         return new LoginResponse(
                 accessToken,
@@ -85,6 +89,68 @@ public class AuthService implements IAuthService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole().getName()
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserWithProfileResponse> getAllUsersWithProfiles() {
+        System.out.println("getAllUsersWithProfiles");
+        List<User> users = userRepo.findAll();
+        return users.stream().map(this::mapToUserWithProfileResponse).collect(Collectors.toList());
+    }
+
+    private UserWithProfileResponse mapToUserWithProfileResponse(User user) {
+        UserProfileResponse userProfileResponse = null;
+        CoachProfileResponse coachProfileResponse = null;
+
+        // Check for UserProfile
+        Optional<UserProfile> userProfile = userProfileRepo.findByUserId(user.getId());
+        if (userProfile.isPresent()) {
+            UserProfile profile = userProfile.get();
+            userProfileResponse = new UserProfileResponse(
+                    profile.getId(),
+                    profile.getWeight(),
+                    profile.getHeight(),
+                    profile.getAge(),
+                    profile.getGender(), // Convert enum to String
+                    profile.getMedicalConditions(),
+                    profile.getGoalIds(),
+                    user.getId(),
+                    user.getEmail(),
+                    user.getUsername(),
+                    user.getRole().getName(),
+                    profile.getCreatedAt(),
+                    profile.getLastUpdated()
+            );
+        }
+
+        // Check for CoachProfile
+        Optional<CoachProfile> coachProfile = coachProfileRepo.findByUserId(user.getId());
+        if (coachProfile.isPresent()) {
+            CoachProfile profile = coachProfile.get();
+            coachProfileResponse = new CoachProfileResponse(
+                    profile.getId(),
+                    profile.getAge(),
+                    profile.getGender(), // Convert enum to String
+                    profile.getQualification(),
+                    profile.getBio(),
+                    user.getId(),
+                    user.getEmail(),
+                    user.getUsername(),
+                    user.getRole().getName(),
+                    profile.getCreatedAt(),
+                    profile.getLastUpdated()
+            );
+        }
+
+        return new UserWithProfileResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole().getName(),
+                userProfileResponse,
+                coachProfileResponse
         );
     }
 
