@@ -1,5 +1,7 @@
 package cs544.fit.user_service.controller;
 
+import cs544.fit.user_service.dto.LoginRequest;
+import cs544.fit.user_service.dto.LoginResponse;
 import cs544.fit.user_service.dto.RegisterRequest;
 import cs544.fit.user_service.dto.RegisterResponse;
 import cs544.fit.user_service.service.IAuthService;
@@ -26,6 +28,11 @@ public class AuthController {
     @PostMapping("/register-coach")
     public ResponseEntity<RegisterResponse> registerCoach(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.registerCoach(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 
 }
