@@ -2,6 +2,7 @@ package cs544.fit.workout_service.service;
 
 import cs544.fit.workout_service.dto.WorkoutCategoryDTO;
 import cs544.fit.workout_service.entity.WorkoutCategory;
+import cs544.fit.workout_service.entity.WorkoutPlan;
 import cs544.fit.workout_service.repository.WorkoutCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,16 @@ public class WorkoutCategoryServiceImpl implements WorkoutCategoryService {
     }
 
     private WorkoutCategoryDTO toDTO(WorkoutCategory category) {
-        return new WorkoutCategoryDTO(category.getId(), category.getName(), category.getDescription());
+        List<String> workoutPlanNames = category.getWorkoutPlans() != null
+                ? category.getWorkoutPlans().stream()
+                .map(WorkoutPlan::getTitle)
+                .toList()
+                : List.of();
+
+        return new WorkoutCategoryDTO(
+                category.getId(),
+                category.getName(),
+                category.getDescription(),
+                workoutPlanNames);
     }
 }

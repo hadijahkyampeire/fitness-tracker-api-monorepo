@@ -2,6 +2,7 @@ package cs544.fit.workout_service.controller;
 
 import cs544.fit.workout_service.dto.WorkoutCategoryDTO;
 import cs544.fit.workout_service.entity.WorkoutCategory;
+import cs544.fit.workout_service.entity.WorkoutPlan;
 import cs544.fit.workout_service.repository.WorkoutCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,7 +34,7 @@ public class WorkoutCategoryController {
             category.setName(dto.name());
             category.setDescription(dto.description());
             WorkoutCategory saved = categoryRepository.save(category);
-            return ResponseEntity.ok(new WorkoutCategoryDTO(saved.getId(), saved.getName(), saved.getDescription()));
+            return ResponseEntity.ok(new WorkoutCategoryDTO(saved.getId(), saved.getName(), saved.getDescription(), List.of()));
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(409).body("Category name already exists. Please choose a different name.");
         }
@@ -43,7 +44,14 @@ public class WorkoutCategoryController {
     @GetMapping
     public ResponseEntity<List<WorkoutCategoryDTO>> getAll() {
         List<WorkoutCategoryDTO> categories = categoryRepository.findAll().stream()
-                .map(c -> new WorkoutCategoryDTO(c.getId(), c.getName(), c.getDescription()))
+                .map(c -> new WorkoutCategoryDTO(
+                        c.getId(),
+                        c.getName(),
+                        c.getDescription(),
+                        c.getWorkoutPlans() != null ?
+                                c.getWorkoutPlans().stream().map(WorkoutPlan::getTitle).toList():
+                                List.of()
+                        ))
                 .toList();
         return ResponseEntity.ok(categories);
     }
@@ -52,7 +60,7 @@ public class WorkoutCategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<WorkoutCategoryDTO> getById(@PathVariable("id") Long id) {
         return categoryRepository.findById(id)
-                .map(c -> new WorkoutCategoryDTO(c.getId(), c.getName(), c.getDescription()))
+                .map(c -> new WorkoutCategoryDTO(c.getId(), c.getName(), c.getDescription(), List.of()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -79,4 +87,26 @@ public class WorkoutCategoryController {
         }
         return ResponseEntity.notFound().build();
     }
+    // ACCESSED ONLY BY ADMIN AND COACH
+   @PutMapping("/{id}")
+   public ResponseEntity<WorkoutCategoryDTO> update(@PathVariable("id") Long id, @RequestBody WorkoutCategoryDTO dto) {
+       return categoryRepository.findById(id)
+               .map(existing -> {
+                   existing.setName(dto.name());
+                   existing.setDescription(dto.description());
+                   WorkoutCategory updated = categoryRepository.save(existing);
+                   return ResponseEntity.ok(new WorkoutCategoryDTO(updated.getId(), updated.getName(), updated.getDescription()));
+               })
+               .orElse(ResponseEntity.notFound().build());
+   }
+
+   // ACCESSED ONLY BY ADMIN AND COACH
+   @DeleteMapping("/{id}")
+   public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+       if (categoryRepository.existsById(id)) {
+           categoryRepository.deleteById(id);
+           return ResponseEntity.noContent().build();
+       }
+       return ResponseEntity.notFound().build();
+   }
 }
