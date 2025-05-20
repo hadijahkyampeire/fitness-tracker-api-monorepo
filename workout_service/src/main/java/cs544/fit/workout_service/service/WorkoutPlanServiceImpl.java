@@ -1,16 +1,21 @@
 package cs544.fit.workout_service.service;
 
+import cs544.fit.workout_service.config.JwtUtil;
 import cs544.fit.workout_service.dto.WorkoutPlanDTO;
 import cs544.fit.workout_service.entity.WorkoutCategory;
 import cs544.fit.workout_service.entity.WorkoutPlan;
 import cs544.fit.workout_service.repository.WorkoutCategoryRepository;
 import cs544.fit.workout_service.repository.WorkoutPlanRepository;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,16 +30,37 @@ public class WorkoutPlanServiceImpl implements WorkoutPlanService {
     @Autowired
     private WorkoutCategoryRepository categoryRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private Long getLoggedInUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth.getPrincipal() instanceof Jwt jwt) {
-            return jwt.getClaim("userId");
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new IllegalStateException("User not authenticated or JWT missing");
         }
-        throw new IllegalStateException("User not authenticated or JWT missing");
+
+        // Get token from request
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new IllegalStateException("JWT token missing in request");
+        }
+        String token = authHeader.substring(7);
+
+        // Extract userId from JWT claims
+        Claims claims = jwtUtil.extractAllClaims(token);
+        Long userId = claims.get("userId", Long.class);
+        if (userId == null) {
+            throw new IllegalStateException("User ID not found in JWT claims");
+        }
+        return userId;
     }
 
     private boolean isAdmin() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return false;
+        }
         return auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(role -> role.equals("ROLE_ADMIN"));

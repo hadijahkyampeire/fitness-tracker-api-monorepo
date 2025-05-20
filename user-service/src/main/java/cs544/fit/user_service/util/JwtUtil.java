@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,21 +22,22 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    private SecretKey secret;
+    private final SecretKey secret;
     private final long expiration = 5 * 60 * 60; // 5 hours
     private final long refreshExpiration = 10 * 60 * 60 * 24; // 10 days
-
     private final UserDetailsService userDetailsService;
 
-    @PostConstruct
-    public void initKey() {
-        // Only called once at startup — secure key
-        this.secret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    }
+    // Hardcoded Base64-encoded secret key (64 bytes for HS512)
+    private static final String SECRET_KEY = "eW91ci12ZXJ5LWxvbmcTc2VjcmV0LWtleS1zdHJpbmctZm9yLWhzNTEyLXNpZ25pbmctNjQtYnl0ZXMtbG9uZw==";
 
     @Autowired
     public JwtUtil(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
+        try {
+            this.secret = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Invalid hardcoded JWT secret key: must be valid Base64", e);
+        }
     }
 
     public String generateToken(String email, Long userId, String roleName) {

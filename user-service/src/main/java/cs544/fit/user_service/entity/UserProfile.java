@@ -30,7 +30,7 @@ public class UserProfile {
 
     private String medicalConditions;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<Long> goalIds;
 
     @OneToOne
