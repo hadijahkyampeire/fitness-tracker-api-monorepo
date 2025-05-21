@@ -43,8 +43,13 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(authorize -> authorize
+<<<<<<< Updated upstream
                         .requestMatchers("/api/auth/register-user", "/api/auth/register-coach", "/api/auth/login", "/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/users").hasAnyAuthority("ROLE_ADMIN")
+=======
+                        .requestMatchers("/api/auth/register-user", "/api/auth/register-coach", "/api/auth/login","/api/auth/users").permitAll()
+//                        .requestMatchers("/api/auth/users").hasAnyAuthority("ROLE_ADMIN")
+>>>>>>> Stashed changes
                         .requestMatchers("/api/profile/user/**").hasAnyAuthority("ROLE_USER")
                         .requestMatchers("/api/profile/coach/**").hasAnyAuthority("ROLE_COACH")
                         .anyRequest().authenticated()

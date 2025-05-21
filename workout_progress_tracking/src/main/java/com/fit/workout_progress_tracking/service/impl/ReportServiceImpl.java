@@ -53,7 +53,7 @@ public class ReportServiceImpl {
 
         UserProfileResponse profile = userClient.getUserProfile(userId);
         System.out.println("Username: " + profile.getUsername());
-//        System.out.println("Read This User Profile: " + profile);
+        //System.out.println("Read This User Profile: " + profile);
 
         // a profile has a list of goal category IDs
         List<String> goals;

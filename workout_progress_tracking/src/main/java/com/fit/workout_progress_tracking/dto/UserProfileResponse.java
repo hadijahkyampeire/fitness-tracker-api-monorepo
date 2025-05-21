@@ -4,13 +4,13 @@ import com.fit.workout_progress_tracking.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class UserProfileResponse {
     private Long id;
     private double weight;
@@ -28,3 +28,4 @@ public class UserProfileResponse {
     private LocalDateTime createdAt;
     private LocalDateTime lastUpdated;
 }
+
