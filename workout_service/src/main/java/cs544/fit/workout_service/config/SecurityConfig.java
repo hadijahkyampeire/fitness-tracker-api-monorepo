@@ -30,9 +30,13 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/workouts/**").hasAnyAuthority("ROLE_COACH", "ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/workouts/**").hasAnyAuthority("ROLE_COACH", "ROLE_ADMIN")
 
+//              Workout Progress
+              .requestMatchers(HttpMethod.GET, "/api/progress-tracker/**").hasAnyAuthority("ROLE_COACH", "ROLE_ADMIN", "ROLE_USER")
+                        .requestMatchers(HttpMethod.POST, "/api/progress-tracker/**").hasAnyAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/progress-tracker/**").hasAnyAuthority("ROLE_USER")
 
 
-                // Category endpoints
+                        // Category endpoints
                 .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAuthority("ROLE_ADMIN")
