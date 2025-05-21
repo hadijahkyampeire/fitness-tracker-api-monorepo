@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class WorkoutCategory {
     private String name;
     private String description;
 
+    @BatchSize(size = 50)
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<WorkoutPlan> workoutPlans;

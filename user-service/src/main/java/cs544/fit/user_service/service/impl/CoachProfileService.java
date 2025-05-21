@@ -33,7 +33,7 @@ public class CoachProfileService implements ICoachProfileService {
 
         CoachProfile profile = new CoachProfile();
         profile.setUser(user);
-        profile.setGender(request.getGender());
+        profile.getPersonalInfo().setGender(request.getGender());
         profile.setAge(request.getAge());
         profile.setQualification(request.getQualification());
         profile.setBio(request.getBio());
@@ -45,7 +45,7 @@ public class CoachProfileService implements ICoachProfileService {
         return new CoachProfileResponse(
                 saved.getId(),
                 saved.getAge(),
-                saved.getGender(),
+                saved.getPersonalInfo().getGender(),
                 saved.getQualification(),
                 saved.getBio(),
                 user.getId(),
@@ -66,7 +66,7 @@ public class CoachProfileService implements ICoachProfileService {
         return new CoachProfileResponse(
                 profile.getId(),
                 profile.getAge(),
-                profile.getGender(),
+                profile.getPersonalInfo().getGender(),
                 profile.getQualification(),
                 profile.getBio(),
                 user.getId(),
@@ -83,7 +83,7 @@ public class CoachProfileService implements ICoachProfileService {
         CoachProfile profile = coachProfileRepo.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Coach profile not found"));
 
-        profile.setGender(request.getGender());
+        profile.getPersonalInfo().setGender(request.getGender());
         profile.setAge(request.getAge());
         profile.setQualification(request.getQualification());
         profile.setBio(request.getBio());
@@ -96,7 +96,7 @@ public class CoachProfileService implements ICoachProfileService {
         return new CoachProfileResponse(
                 updated.getId(),
                 updated.getAge(),
-                updated.getGender(),
+                updated.getPersonalInfo().getGender(),
                 updated.getQualification(),
                 updated.getBio(),
                 user.getId(),
