@@ -23,12 +23,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         // Everyone can GET
-                        .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
-                       .requestMatchers(HttpMethod.GET, "/api/profile/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                        .requestMatchers("/api/progress/**").hasAnyAuthority("ROLE_USER", "ROLE_COACH", "ROLE_ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/api/profile/**").hasAnyAuthority("ROLE_USER", "ROLE_COACH")
+                    .requestMatchers(HttpMethod.GET, "/api/profile/**", "/swagger-ui/**", "/api-docs/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                    .requestMatchers("/api/progress").hasAnyAuthority("ROLE_USER", "ROLE_COACH", "ROLE_ADMIN")
+                    .requestMatchers("/api/feedback").hasAnyAuthority("ROLE_USER", "ROLE_COACH", "ROLE_ADMIN")
+                    .requestMatchers("/api/feedback/").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                    .requestMatchers("/api/feedback/").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 
-                // Anything else requires authentication
+
+
+                        // Anything else requires authentication
                 .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

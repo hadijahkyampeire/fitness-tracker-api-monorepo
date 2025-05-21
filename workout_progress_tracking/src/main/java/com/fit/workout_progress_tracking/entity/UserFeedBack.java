@@ -12,6 +12,7 @@ public class UserFeedBack {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private double weight;
+    private Long userId;
+    private double newWeight;
     private String comment;
 }
