@@ -1,6 +1,7 @@
 package cs544.fit.workout_service.service;
 
 import cs544.fit.workout_service.config.JwtUtil;
+import cs544.fit.workout_service.dto.UserWorkoutProgressDTO;
 import cs544.fit.workout_service.dto.WorkoutProgressUpdateResponse;
 import cs544.fit.workout_service.dto.WorkoutStatusUpdateRequestDTO;
 import cs544.fit.workout_service.entity.UserWorkoutProgress;
@@ -23,6 +24,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,11 +83,27 @@ public class UserWorkoutProgressService {
         }
         return progressRepo.saveAll(newProgresses);
     }
-    public List<UserWorkoutProgress> getUserProgress() {
-        Long userId = getLoggedInUserId();
 
-        return progressRepo.findByUserId(userId);
+
+    public List<UserWorkoutProgressDTO> getUserProgress() {
+        Long userId = getLoggedInUserId();
+        List<UserWorkoutProgress> progressList = progressRepo.findByUserId(userId);
+        return progressList.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
+
+
+    private UserWorkoutProgressDTO mapToDto(UserWorkoutProgress progress) {
+        UserWorkoutProgressDTO dto = new UserWorkoutProgressDTO();
+        dto.setUserId(progress.getUserId());
+        dto.setWorkoutTitle(progress.getWorkout().getTitle());
+        dto.setStatus(progress.getStatus().name());
+        dto.setCategoryId(progress.getCategory().getId());
+        dto.setCategoryName(progress.getCategory().getName());
+        return dto;
+    }
+
     public WorkoutProgressUpdateResponse updateProgressStatus(Long progressId, WorkoutStatusUpdateRequestDTO request) {
 
         UserWorkoutProgress progress = progressRepo.findById(progressId)
