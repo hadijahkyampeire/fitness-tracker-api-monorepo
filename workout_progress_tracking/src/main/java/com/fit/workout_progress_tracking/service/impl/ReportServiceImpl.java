@@ -1,9 +1,8 @@
 package com.fit.workout_progress_tracking.service.impl;
 
 import com.fit.workout_progress_tracking.config.JwtUtil;
-import com.fit.workout_progress_tracking.dto.UserInfoDTO;
-import com.fit.workout_progress_tracking.dto.UserProfileResponse;
-import com.fit.workout_progress_tracking.dto.WorkoutCategoryDTO;
+import com.fit.workout_progress_tracking.dto.*;
+import com.fit.workout_progress_tracking.entity.WorkoutStatus;
 import com.fit.workout_progress_tracking.service.UserClient;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,13 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ReportServiceImpl {
     @Autowired
     private UserClient userClient;
@@ -47,38 +51,87 @@ public class ReportServiceImpl {
         return userId;
     }
 
-    public UserInfoDTO getUserInfo() {
+    public ProgressSummaryDTO getProgressReportForCurrentUser() {
+        // 1. Fetch progress
+        UserWorkoutProgressDTO[] progressArray = userClient.getUserWorkoutProgress();
+        List<UserWorkoutProgressDTO> progressList = Arrays.asList(progressArray);
+
+        if (progressList.isEmpty()) return null;
+
         Long userId = getLoggedInUserId();
-        System.out.println("Read This User Id: " + userId);
 
-        UserProfileResponse profile = userClient.getUserProfile(userId);
-        System.out.println("Username: " + profile.getUsername());
-        //System.out.println("Read This User Profile: " + profile);
+        // 2. Fetch user info
+        UserProfileResponse userProfile = userClient.getUserProfile(userId);
 
-        // a profile has a list of goal category IDs
-        List<String> goals;
+        // 3. Group by category
+        Map<Long, List<UserWorkoutProgressDTO>> groupedByCategory = progressList.stream()
+                .collect(Collectors.groupingBy(UserWorkoutProgressDTO::getCategoryId));
 
-        // If profile has goal IDs that map to category names
-        if (profile.getGoalIds() != null) {
-            goals = profile.getGoalIds().stream()
-                    .map(id -> {
-                        WorkoutCategoryDTO category = userClient.getCategoryById(id);
-                        return category != null ? category.name() : null;
-                    })
-                    .filter(name -> name != null)
-                    .collect(Collectors.toList());
-        } else {
-            goals = List.of(); // default empty if not present
+        List<CategoryProgressDTO> categoryProgressList = new ArrayList<>();
+
+        int totalWorkouts = 0;
+        int completed = 0;
+        int notStarted = 0;
+        int inProgress = 0;
+
+        for (Map.Entry<Long, List<UserWorkoutProgressDTO>> entry : groupedByCategory.entrySet()) {
+            Long categoryId = entry.getKey();
+            List<UserWorkoutProgressDTO> categoryItems = entry.getValue();
+
+            int total = categoryItems.size();
+            int notStartedCount = (int) categoryItems.stream()
+                    .filter(p -> WorkoutStatus.valueOf(p.getStatus()) == WorkoutStatus.NOT_STARTED)
+                    .count();
+
+            int inProgressCount = (int) categoryItems.stream()
+                    .filter(p -> WorkoutStatus.valueOf(p.getStatus()) == WorkoutStatus.IN_PROGRESS)
+                    .count();
+
+            int completedCount = (int) categoryItems.stream()
+                    .filter(p -> WorkoutStatus.valueOf(p.getStatus()) == WorkoutStatus.FINISHED)
+                    .count();
+
+            CategoryProgressDTO cp = new CategoryProgressDTO();
+            cp.setCategoryId(categoryId);
+            cp.setCategoryName(categoryItems.get(0).getCategoryName());
+            cp.setTotalWorkouts(total);
+            cp.setNotStarted(notStartedCount);
+            cp.setInProgress(inProgressCount);
+            cp.setCompleted(completedCount);
+            cp.setWorkoutTitles(categoryItems.stream()
+                    .map(UserWorkoutProgressDTO::getWorkoutTitle)
+                    .collect(Collectors.toList()));
+
+            categoryProgressList.add(cp);
+
+            totalWorkouts += total;
+            completed += completedCount;
+            notStarted += notStartedCount;
+            inProgress += inProgressCount;
         }
 
-        UserInfoDTO dto = new UserInfoDTO();
-        dto.setUserId(profile.getUserId());
-        dto.setUserName(profile.getUsername());
-        dto.setUserEmail(profile.getUserEmail());
-        dto.setWeight(profile.getWeight());
-        dto.setHeight(profile.getHeight());
-        dto.setGoals(goals);
+        // 4. Final report
+        ProgressSummaryDTO report = new ProgressSummaryDTO();
+        report.setUserId(userId);
+        report.setFullName(userProfile.getUsername());
+        report.setEmail(userProfile.getUserEmail());
+        report.setAge(userProfile.getAge());
+        report.setWeight(userProfile.getWeight());
+        report.setHeight(userProfile.getHeight());
+        report.setBmi(userProfile.getBmi());
+        report.setGender(userProfile.getGender().toString());
+        report.setRole(userProfile.getRole());
+        report.setMedicalConditions(userProfile.getMedicalConditions());
 
-        return dto;
+        report.setTotalWorkouts(totalWorkouts);
+        report.setCompleted(completed);
+        report.setInProgress(inProgress);
+        report.setNotStarted(notStarted);
+
+        report.setCategoryProgress(categoryProgressList);
+
+        return report;
     }
+
+
 }

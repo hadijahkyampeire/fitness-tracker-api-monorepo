@@ -1,6 +1,7 @@
 package cs544.fit.workout_service.controller;
 
 import cs544.fit.workout_service.dto.CategorySelectRequestDTO;
+import cs544.fit.workout_service.dto.UserWorkoutProgressDTO;
 import cs544.fit.workout_service.dto.WorkoutProgressUpdateResponse;
 import cs544.fit.workout_service.dto.WorkoutStatusUpdateRequestDTO;
 import cs544.fit.workout_service.entity.UserWorkoutProgress;
@@ -46,7 +47,7 @@ public class UserWorkoutProgressController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved user progress"),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
     })
-    public List<UserWorkoutProgress> getMyProgress() {
+    public List<UserWorkoutProgressDTO> getMyProgress() {
         return progressService.getUserProgress();
     }
 

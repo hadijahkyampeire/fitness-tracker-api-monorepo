@@ -26,7 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                        .requestMatchers(HttpMethod.GET, "/api/profile/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                        .requestMatchers("/api/progress").hasAnyAuthority("ROLE_USER", "ROLE_COACH", "ROLE_ADMIN")
+                        .requestMatchers("/api/progress/**").hasAnyAuthority("ROLE_USER", "ROLE_COACH", "ROLE_ADMIN")
 
                 // Anything else requires authentication
                 .anyRequest().authenticated())

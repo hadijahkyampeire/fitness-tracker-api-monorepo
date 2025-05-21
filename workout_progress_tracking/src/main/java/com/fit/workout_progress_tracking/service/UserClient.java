@@ -14,7 +14,6 @@ import java.util.Objects;
 public class UserClient {
     private String baseUrl = "http://localhost:8081/api/profile";
     private String userUrl = "http://localhost:8081/api/auth";
-    private String authUrl = "http://localhost:8081/api/auth";
     private String workoutsUrl = "http://localhost:8082/api/workouts";
     private String categoriesUrl = "http://localhost:8082/api/categories";
 
@@ -69,5 +68,10 @@ public class UserClient {
     public WorkoutCategoryDTO getCategoryById(Long id) {
         String url = categoriesUrl + "/" + id;
         return restTemplate.getForObject(url, WorkoutCategoryDTO.class);
+    }
+
+    public UserWorkoutProgressDTO[] getUserWorkoutProgress() {
+        String progressUrl = "http://localhost:8082/api/progress-tracker"; // workout-service
+        return restTemplate.getForObject(progressUrl, UserWorkoutProgressDTO[].class);
     }
 }
