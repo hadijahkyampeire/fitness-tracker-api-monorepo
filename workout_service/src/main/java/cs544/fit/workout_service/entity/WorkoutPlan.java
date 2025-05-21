@@ -1,5 +1,6 @@
 package cs544.fit.workout_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -25,11 +26,8 @@ public class WorkoutPlan {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private WorkoutCategory category;
-
-// REPORTS TO BE ADDED BY JAMAL
-//    @OneToMany(mappedBy = "workoutPlan", cascade = CascadeType.ALL)
-//    private List<WorkoutLog> logs = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

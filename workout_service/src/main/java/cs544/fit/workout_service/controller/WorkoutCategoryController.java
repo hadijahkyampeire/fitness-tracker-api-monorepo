@@ -2,6 +2,7 @@ package cs544.fit.workout_service.controller;
 
 import cs544.fit.workout_service.dto.WorkoutCategoryDTO;
 import cs544.fit.workout_service.entity.WorkoutCategory;
+import cs544.fit.workout_service.entity.WorkoutPlan;
 import cs544.fit.workout_service.repository.WorkoutCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -41,18 +42,23 @@ public class WorkoutCategoryController {
 
     // ACCESSED ONLY BY ADMIN, COACH AND USER
     @GetMapping
-    public ResponseEntity<List<WorkoutCategoryDTO>> getAll() {
-        List<WorkoutCategoryDTO> categories = categoryRepository.findAll().stream()
-                .map(c -> new WorkoutCategoryDTO(c.getId(), c.getName(), c.getDescription()))
+    public ResponseEntity<List<WorkoutCategory>> getAll() {
+        List<WorkoutCategory> categories = categoryRepository.findAll().stream()
+                .map(c -> new WorkoutCategory(
+                        c.getId(),
+                        c.getName(),
+                        c.getDescription(),
+                        c.getWorkoutPlans()
+                        ))
                 .toList();
         return ResponseEntity.ok(categories);
     }
 
     // ACCESSED BY ADMIN, COACH AND USER
     @GetMapping("/{id}")
-    public ResponseEntity<WorkoutCategoryDTO> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<WorkoutCategory> getById(@PathVariable("id") Long id) {
         return categoryRepository.findById(id)
-                .map(c -> new WorkoutCategoryDTO(c.getId(), c.getName(), c.getDescription()))
+                .map(c -> new WorkoutCategory(c.getId(), c.getName(), c.getDescription(), c.getWorkoutPlans()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

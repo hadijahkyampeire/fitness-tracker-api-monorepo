@@ -1,8 +1,9 @@
-.PHONY: all user workout run clean stop
+.PHONY: all user workout progress run clean stop
 
 USER_SERVICE=user-service
 WORKOUT_SERVICE=workout_service
-PORTS=8080 8081 8082
+PROGRESS_SERVICE=workout_progress_tracking
+PORTS=8080 8081 8082 8083
 
 # Default action: stop first, then run
 all: run
@@ -14,6 +15,9 @@ run: stop
 	@echo "Starting workout-service..."
 	cd $(WORKOUT_SERVICE) && mvn spring-boot:run &
 
+	@echo "Starting progress-service..."
+	cd $(PROGRESS_SERVICE) && mvn spring-boot:run &
+
 	@echo "All services running. Press Ctrl+C to stop."
 
 user:
@@ -22,9 +26,13 @@ user:
 workout:
 	cd $(WORKOUT_SERVICE) && mvn spring-boot:run
 
+progress:
+	cd $(PROGRESS_SERVICE) && mvn spring-boot:run
+
 clean:
 	cd $(USER_SERVICE) && mvn clean
 	cd $(WORKOUT_SERVICE) && mvn clean
+	cd $(PROGRESS_SERVICE) && mvn clean
 
 stop:
 	@echo "Stopping all running Spring Boot services and freeing ports..."
