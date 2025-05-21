@@ -34,8 +34,7 @@ public class UserProfileService implements IUserProfileService {
         profile.setUser(user);
         profile.setWeight(request.getWeight());
         profile.setHeight(request.getHeight());
-        profile.setAge(request.getAge());
-        profile.setGender(request.getGender());
+        profile.getPersonalInfo().setGender(request.getGender());
         profile.setMedicalConditions(request.getMedicalConditions());
         profile.setCreatedAt(LocalDateTime.now());
         profile.setLastUpdated(LocalDateTime.now());
@@ -58,8 +57,7 @@ public class UserProfileService implements IUserProfileService {
 
         profile.setWeight(request.getWeight());
         profile.setHeight(request.getHeight());
-        profile.setAge(request.getAge());
-        profile.setGender(request.getGender());
+        profile.getPersonalInfo().setGender(request.getGender());
         profile.setMedicalConditions(request.getMedicalConditions());
         profile.setLastUpdated(LocalDateTime.now());
 
@@ -71,8 +69,9 @@ public class UserProfileService implements IUserProfileService {
                 updated.getWeight(),
                 updated.getHeight(),
                 updated.getAge(),
-                updated.getGender(),
+                updated.getPersonalInfo().getGender(),
                 updated.getMedicalConditions(),
+                updated.getBmi(),
                 user.getId(),
                 user.getEmail(),
                 user.getUsername(),
@@ -88,8 +87,9 @@ public class UserProfileService implements IUserProfileService {
                 profile.getWeight(),
                 profile.getHeight(),
                 profile.getAge(),
-                profile.getGender(),
+                profile.getPersonalInfo().getGender(),
                 profile.getMedicalConditions(),
+                profile.getBmi(),
                 user.getId(),
                 user.getEmail(),
                 user.getUsername(),

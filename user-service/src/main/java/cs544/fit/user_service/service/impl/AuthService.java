@@ -14,15 +14,11 @@ import cs544.fit.user_service.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -95,43 +91,35 @@ public class AuthService implements IAuthService {
     @Override
     @Transactional(readOnly = true)
     public List<UserWithProfileResponse> getAllUsersWithProfiles() {
-        System.out.println("getAllUsersWithProfiles");
-        List<User> users = userRepo.findAll();
-        return users.stream().map(this::mapToUserWithProfileResponse).collect(Collectors.toList());
+        return userRepo.findAll()
+                .stream()
+                .map(this::mapToUserWithProfileResponse)
+                .collect(Collectors.toList());
     }
 
     private UserWithProfileResponse mapToUserWithProfileResponse(User user) {
-        UserProfileResponse userProfileResponse = null;
-        CoachProfileResponse coachProfileResponse = null;
-
-        // Check for UserProfile
-        Optional<UserProfile> userProfile = userProfileRepo.findByUserId(user.getId());
-        if (userProfile.isPresent()) {
-            UserProfile profile = userProfile.get();
-            userProfileResponse = new UserProfileResponse(
+        UserProfileResponse userProfileResponse = userProfileRepo.findByUserId(user.getId())
+                .map(profile -> new UserProfileResponse(
                     profile.getId(),
                     profile.getWeight(),
                     profile.getHeight(),
                     profile.getAge(),
-                    profile.getGender(), // Convert enum to String
+                    profile.getPersonalInfo() != null ? profile.getPersonalInfo().getGender() : null,
                     profile.getMedicalConditions(),
+                    profile.getBmi(),
                     user.getId(),
                     user.getEmail(),
                     user.getUsername(),
                     user.getRole().getName(),
                     profile.getCreatedAt(),
                     profile.getLastUpdated()
-            );
-        }
+            )).orElse(null);
 
-        // Check for CoachProfile
-        Optional<CoachProfile> coachProfile = coachProfileRepo.findByUserId(user.getId());
-        if (coachProfile.isPresent()) {
-            CoachProfile profile = coachProfile.get();
-            coachProfileResponse = new CoachProfileResponse(
+        CoachProfileResponse coachProfileResponse = coachProfileRepo.findByUserId(user.getId())
+                .map(profile -> new CoachProfileResponse(
                     profile.getId(),
                     profile.getAge(),
-                    profile.getGender(), // Convert enum to String
+                    profile.getPersonalInfo() != null ? profile.getPersonalInfo().getGender() : null,
                     profile.getQualification(),
                     profile.getBio(),
                     user.getId(),
@@ -140,8 +128,7 @@ public class AuthService implements IAuthService {
                     user.getRole().getName(),
                     profile.getCreatedAt(),
                     profile.getLastUpdated()
-            );
-        }
+            )).orElse(null);
 
         return new UserWithProfileResponse(
                 user.getId(),

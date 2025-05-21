@@ -16,11 +16,11 @@ INSERT INTO users VALUES (DEFAULT, 2,'marie@example.com', '$2a$10$P5rgd08r1WzhAC
 INSERT INTO users VALUES (DEFAULT, 3,'jamal@example.com', '$2a$10$Bmt9fki17Yqo90d/nPGu0.UR1vtyLhp6lKg3oaK6UyWSVn3tfLp3S', 'Jamal'); -- password: admin123
 
 -- Insert user profiles (with role as coach)
-INSERT INTO coach_profile VALUES (35, NOW(), DEFAULT, NOW(), 2, 'Helping you get stronger every day!', 'MALE', 'Certified Personal Trainer, BSc in Sports Science');
-INSERT INTO coach_profile VALUES (42, NOW(), DEFAULT, NOW(), 3, 'Balance body and mind through movement.', 'FEMALE', 'Yoga Instructor, MSc in Physiology');
-INSERT INTO coach_profile VALUES (29, NOW(), DEFAULT, NOW(), 4, 'Train smart, eat smarter.', 'MALE', 'CrossFit Level 1, Nutrition Coach');
+INSERT INTO coach_profile VALUES ('1989-05-20', NOW(), DEFAULT, NOW(), 2, 'Helping you get stronger every day!', 'MALE', 'Certified Personal Trainer, BSc in Sports Science');
+INSERT INTO coach_profile VALUES ('1982-08-10', NOW(), DEFAULT, NOW(), 3, 'Balance body and mind through movement.', 'FEMALE', 'Yoga Instructor, MSc in Physiology');
+INSERT INTO coach_profile VALUES ('1995-03-15', NOW(), DEFAULT, NOW(), 4, 'Train smart, eat smarter.', 'MALE', 'CrossFit Level 1, Nutrition Coach');
 
 -- Insert user profiles (with role as user)
-INSERT INTO user_profile VALUES (35, 180, 80, NOW(), DEFAULT, NOW(), 1, 'MALE', 'None');
-INSERT INTO user_profile VALUES (42, 165, 65, NOW(), DEFAULT, NOW(), 2, 'FEMALE', 'Asthma');
+INSERT INTO user_profile VALUES ('1989-05-20', 180, 80, NOW(), DEFAULT, NOW(), 1, 'MALE', 'None');
+INSERT INTO user_profile VALUES ('1982-08-10', 165, 65, NOW(), DEFAULT, NOW(), 2, 'FEMALE', 'Asthma');
 
