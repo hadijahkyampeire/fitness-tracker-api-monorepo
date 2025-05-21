@@ -77,7 +77,9 @@ make run
 
 Make sure `docker` and `docker compose` are installed.
 
-then simply run these:
+Check all the `application.properties` files in each microservice, read the comments and do the necessary
+
+Then simply run these:
 ```
 docker compose build
 docker compose up
