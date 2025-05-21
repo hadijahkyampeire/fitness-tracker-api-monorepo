@@ -115,7 +115,6 @@ public class AuthService implements IAuthService {
                     profile.getAge(),
                     profile.getGender(), // Convert enum to String
                     profile.getMedicalConditions(),
-                    profile.getGoalIds(),
                     user.getId(),
                     user.getEmail(),
                     user.getUsername(),

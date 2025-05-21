@@ -37,7 +37,6 @@ public class UserProfileService implements IUserProfileService {
         profile.setAge(request.getAge());
         profile.setGender(request.getGender());
         profile.setMedicalConditions(request.getMedicalConditions());
-        profile.setGoalIds(request.getGoalIds());
         profile.setCreatedAt(LocalDateTime.now());
         profile.setLastUpdated(LocalDateTime.now());
 
@@ -62,7 +61,6 @@ public class UserProfileService implements IUserProfileService {
         profile.setAge(request.getAge());
         profile.setGender(request.getGender());
         profile.setMedicalConditions(request.getMedicalConditions());
-        profile.setGoalIds(request.getGoalIds());
         profile.setLastUpdated(LocalDateTime.now());
 
         UserProfile updated = userProfileRepo.save(profile);
@@ -75,7 +73,6 @@ public class UserProfileService implements IUserProfileService {
                 updated.getAge(),
                 updated.getGender(),
                 updated.getMedicalConditions(),
-                updated.getGoalIds(),
                 user.getId(),
                 user.getEmail(),
                 user.getUsername(),
@@ -93,7 +90,6 @@ public class UserProfileService implements IUserProfileService {
                 profile.getAge(),
                 profile.getGender(),
                 profile.getMedicalConditions(),
-                profile.getGoalIds(),
                 user.getId(),
                 user.getEmail(),
                 user.getUsername(),

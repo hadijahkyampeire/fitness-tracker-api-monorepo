@@ -30,9 +30,6 @@ public class UserProfile {
 
     private String medicalConditions;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<Long> goalIds;
-
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

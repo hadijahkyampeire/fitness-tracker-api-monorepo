@@ -12,5 +12,4 @@ public class UserProfileRequest {
     private double weight;
     private Gender gender;
     private String medicalConditions;
-    private List<Long> goalIds;
 }
