@@ -22,6 +22,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         // Everyone can GET
                         .requestMatchers(HttpMethod.GET, "/api/workouts/**").hasAnyAuthority("ROLE_USER", "ROLE_COACH", "ROLE_ADMIN")
                 // Coaches and Admins can modify workouts

@@ -1,6 +1,7 @@
 ##  [Project / milestone management](https://github.com/hadijahkyampeire/fitness-tracker-api-monorepo/milestone/1)
 
-## [Swagger documentation coming up]()
+## [Swagger documentation coming up]( )
+![Swagger2](./workout-swagger.png)
 
 # FitTrack – Fitness Microservices System
 
