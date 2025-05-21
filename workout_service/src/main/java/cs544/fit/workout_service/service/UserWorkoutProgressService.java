@@ -1,6 +1,8 @@
 package cs544.fit.workout_service.service;
 
 import cs544.fit.workout_service.config.JwtUtil;
+import cs544.fit.workout_service.dto.WorkoutProgressUpdateResponse;
+import cs544.fit.workout_service.dto.WorkoutStatusUpdateRequestDTO;
 import cs544.fit.workout_service.entity.UserWorkoutProgress;
 import cs544.fit.workout_service.entity.WorkoutCategory;
 import cs544.fit.workout_service.entity.WorkoutPlan;
@@ -9,6 +11,7 @@ import cs544.fit.workout_service.repository.UserWorkoutProgressRepository;
 import cs544.fit.workout_service.repository.WorkoutCategoryRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -23,6 +26,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserWorkoutProgressService {
 
     @Autowired
@@ -82,16 +86,23 @@ public class UserWorkoutProgressService {
 
         return progressRepo.findByUserId(userId);
     }
-    public UserWorkoutProgress updateProgressStatus(Long progressId, WorkoutStatus status) {
+    public WorkoutProgressUpdateResponse updateProgressStatus(Long progressId, WorkoutStatusUpdateRequestDTO request) {
+
         UserWorkoutProgress progress = progressRepo.findById(progressId)
                 .orElseThrow(() -> new RuntimeException("Progress not found"));
+        WorkoutStatus status = request.getStatus();
+
         progress.setStatus(status);
         if (status == WorkoutStatus.IN_PROGRESS) {
             progress.setStartedAt(LocalDateTime.now());
         } else if (status == WorkoutStatus.FINISHED) {
             progress.setCompletedAt(LocalDateTime.now());
         }
-        return progressRepo.save(progress);
+        UserWorkoutProgress updated = progressRepo.save(progress);
+        Long workoutId = updated.getWorkout() != null ? updated.getWorkout().getId() : null;
+        Long categoryId = updated.getCategory() != null ? updated.getCategory().getId() : null;
+
+        return new WorkoutProgressUpdateResponse(workoutId, categoryId, updated.getStatus());
     }
 }
 

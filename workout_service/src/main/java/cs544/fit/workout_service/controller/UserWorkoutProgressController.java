@@ -1,6 +1,8 @@
 package cs544.fit.workout_service.controller;
 
 import cs544.fit.workout_service.dto.CategorySelectRequestDTO;
+import cs544.fit.workout_service.dto.WorkoutProgressUpdateResponse;
+import cs544.fit.workout_service.dto.WorkoutStatusUpdateRequestDTO;
 import cs544.fit.workout_service.entity.UserWorkoutProgress;
 import cs544.fit.workout_service.entity.WorkoutStatus;
 import cs544.fit.workout_service.service.UserWorkoutProgressService;
@@ -32,10 +34,7 @@ public class UserWorkoutProgressController {
     }
 
     @PutMapping("/{progressId}")
-    public UserWorkoutProgress updateStatus(
-            @PathVariable Long progressId,
-            @RequestParam WorkoutStatus status
-    ) {
+    public WorkoutProgressUpdateResponse updateStatus(@PathVariable("progressId") Long progressId, @RequestBody WorkoutStatusUpdateRequestDTO status) {
         return progressService.updateProgressStatus(progressId, status);
     }
 }
