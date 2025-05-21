@@ -1,7 +1,10 @@
 ##  [Project / milestone management](https://github.com/hadijahkyampeire/fitness-tracker-api-monorepo/milestone/1)
 
-## [Swagger documentation coming up]( )
-![Swagger2](./workout-swagger.png)
+## Swagger documentation:
+Make sure the app is running before you check these out.
+- User service API: [http://localhost:8081/swagger-ui/index.html#/](http://localhost:8081/swagger-ui/index.html#/)
+- Workout service API: [http://localhost:8082/swagger-ui/index.html#/](http://localhost:8082/swagger-ui/index.html#/)
+- Workout progress service API: [http://localhost:8083/swagger-ui/index.html#/](http://localhost:8083/swagger-ui/index.html#/)
 
 # FitTrack – Fitness Microservices System
 
@@ -142,15 +145,28 @@ You could use a GUI platform like postman to make requests to and fro the api.
 | GET    | `/category/{id}`                            | Get workouts by category                                   |
 | GET    | `/api/workouts/user/{userId}/level/{level}` | Get workouts by coach ID and level                         |
 
+**User Workouts Progress**
 
-### 📈 Progress Service
+| Method | URL                                    | Description                                             |
+|--------|----------------------------------------|---------------------------------------------------------|
+| POST   | `/api/progress-tracker/create`         | Create workout progress entries for selected categories |
+| GET    | `/api/progress-tracker`                | Get progress for current user                           |
+| PUT    | `/api/progress-tracker/{progressId}`   | Update progress status for a specific progress entry    |
 
-| Method | URL                                                | Description                                      |
-|--------|----------------------------------------------------|--------------------------------------------------|
-| GET    | `/progress/user/{userId}`                          | Get full progress report for a user              |
-| GET    | `/progress/user/{userId}/category/{categoryId}`    | Get category-level progress for a user           |
-| POST   | `/progress/log`                                    | Log/update a workout status for a user           |
-| GET    | `/progress/user/{userId}/workout/{workoutId}`      | Get progress for a specific workout              |
+
+### Progress Service
+
+| Method | URL                      | Description                                       |
+|--------|--------------------------|---------------------------------------------------|
+| GET    | `/api/progress/report`   | Get progress report for the current user         |
+
+**User Feedback**
+
+| Method | URL                             | Description                      |
+|--------|----------------------------------|----------------------------------|
+| POST   | `/api/feedback`                 | Submit user feedback             |
+| GET    | `/api/feedback`                 | Retrieve current user feedback   |
+| PUT    | `/api/feedback/{feedbackId}`    | Edit specific user feedback      |
 
 ---
 
