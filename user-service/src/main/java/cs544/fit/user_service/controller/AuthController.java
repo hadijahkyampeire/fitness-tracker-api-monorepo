@@ -2,7 +2,6 @@ package cs544.fit.user_service.controller;
 
 import cs544.fit.user_service.dto.*;
 import cs544.fit.user_service.service.IAuthService;
-import cs544.fit.user_service.service.impl.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
