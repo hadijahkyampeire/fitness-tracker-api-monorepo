@@ -1,14 +1,16 @@
 package com.fit.workout_progress_tracking.dto;
 
-import cs544.fit.workout_service.entity.Gender;
+import com.fit.workout_progress_tracking.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserProfileResponse {
     private Long id;
     private double weight;

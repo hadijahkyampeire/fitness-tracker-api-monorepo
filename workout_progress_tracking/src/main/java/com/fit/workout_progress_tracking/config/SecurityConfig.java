@@ -23,19 +23,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         // Everyone can GET
-                        .requestMatchers(HttpMethod.GET, "/api/workouts/**").hasAnyAuthority("ROLE_USER", "ROLE_COACH", "ROLE_ADMIN")
-                // Coaches and Admins can modify workouts
-                .requestMatchers(HttpMethod.POST, "/api/workouts/**").hasAnyAuthority("ROLE_COACH", "ROLE_ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/workouts/**").hasAnyAuthority("ROLE_COACH", "ROLE_ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/workouts/**").hasAnyAuthority("ROLE_COACH", "ROLE_ADMIN")
-
-
-
-                // Category endpoints
-                .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/categories/**").hasAnyAuthority("ROLE_USER", "ROLE_COACH", "ROLE_ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/api/profile/**").hasAnyAuthority("ROLE_USER", "ROLE_COACH")
+                       .requestMatchers(HttpMethod.GET, "/api/profile/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                        .requestMatchers("/api/progress").hasAnyAuthority("ROLE_USER", "ROLE_COACH", "ROLE_ADMIN")
 
                 // Anything else requires authentication
                 .anyRequest().authenticated())
@@ -43,7 +34,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

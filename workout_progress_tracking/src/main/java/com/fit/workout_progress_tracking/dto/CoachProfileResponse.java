@@ -1,13 +1,15 @@
 package com.fit.workout_progress_tracking.dto;
 
-import cs544.fit.workout_service.entity.Gender;
+import com.fit.workout_progress_tracking.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CoachProfileResponse {
     private Long id;
     private int age;

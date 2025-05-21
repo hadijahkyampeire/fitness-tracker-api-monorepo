@@ -4,13 +4,28 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @SpringBootApplication
 public class WorkoutProgressTrackingApplication {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
+        // Interceptor to forward Authorization header
+        restTemplate.getInterceptors().add((request, body, execution) -> {
+            ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attrs != null) {
+                String authHeader = attrs.getRequest().getHeader("Authorization");
+                if (authHeader != null) {
+                    request.getHeaders().add("Authorization", authHeader);
+                }
+            }
+            return execution.execute(request, body);
+        });
+
+        return restTemplate;
     }
 
     public static void main(String[] args) {
