@@ -16,7 +16,6 @@ public class UserProfileResponse {
     private int age;
     private Gender gender;
     private String medicalConditions;
-    private List<Long> goalIds;
 
     private Long userId;
     private String userEmail;

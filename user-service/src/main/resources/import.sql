@@ -24,12 +24,3 @@ INSERT INTO coach_profile VALUES (29, NOW(), DEFAULT, NOW(), 4, 'Train smart, ea
 INSERT INTO user_profile VALUES (35, 180, 80, NOW(), DEFAULT, NOW(), 1, 'MALE', 'None');
 INSERT INTO user_profile VALUES (42, 165, 65, NOW(), DEFAULT, NOW(), 2, 'FEMALE', 'Asthma');
 
-
--- Insert goalIds for user profiles(with role as user)
-INSERT INTO user_profile_goal_ids VALUES (1, 1);
-INSERT INTO user_profile_goal_ids VALUES (2, 1);
-INSERT INTO user_profile_goal_ids VALUES (3, 1);
-INSERT INTO user_profile_goal_ids VALUES (1, 2);
-INSERT INTO user_profile_goal_ids VALUES (2, 2);
-INSERT INTO user_profile_goal_ids VALUES (4, 2);
-INSERT INTO user_profile_goal_ids VALUES (5, 2);
