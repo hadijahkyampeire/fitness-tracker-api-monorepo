@@ -3,12 +3,13 @@ package cs544.fit.user_service.dto;
 import cs544.fit.user_service.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CoachProfileResponse {
     private Long id;
     private int age;

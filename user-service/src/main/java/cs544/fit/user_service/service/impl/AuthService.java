@@ -147,8 +147,8 @@ public class AuthService implements IAuthService {
 
         Role role = roleRepo.findByName(roleName).orElseThrow(() -> new RuntimeException("Role " + roleName + " not found"));
         User user = new User();
-        user.setEmail(registerRequest.getEmail());
         user.setUsername(registerRequest.getUsername());
+        user.setEmail(registerRequest.getEmail());
         user.setRole(role);
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         User savedUser = userRepo.save(user);

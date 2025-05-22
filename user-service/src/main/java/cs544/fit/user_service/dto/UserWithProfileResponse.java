@@ -12,6 +12,6 @@ public class UserWithProfileResponse {
     private String username;
     private String email;
     private String role;
-    private UserProfileResponse userProfile; // Null for coaches
-    private CoachProfileResponse coachProfile; // Null for regular users
+    private UserProfileResponse userProfile;
+    private CoachProfileResponse coachProfile;
 }
