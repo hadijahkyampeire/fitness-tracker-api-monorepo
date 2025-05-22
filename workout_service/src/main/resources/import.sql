@@ -25,3 +25,14 @@ INSERT INTO workout_plan VALUES (55, 350, 4, NOW(), DEFAULT, NOW(), 3, 'Challeng
 INSERT INTO workout_plan VALUES (30, 400, 5, NOW(), DEFAULT, NOW(), 1, 'Short bursts for beginners', 'BEGINNER', 'HIIT Beginner');
 INSERT INTO workout_plan VALUES (45, 600, 5, NOW(), DEFAULT, NOW(), 2, 'More intense intervals', 'INTERMEDIATE', 'HIIT Intermediate');
 INSERT INTO workout_plan VALUES (60, 800, 5, NOW(), DEFAULT, NOW(), 3, 'Max effort intervals', 'ADVANCED', 'HIIT Advanced');
+
+INSERT INTO user_workout_progress VALUES (1, NULL, DEFAULT, '2024-06-01 08:00:00', 1, 1, 'NOT_STARTED');
+INSERT INTO user_workout_progress VALUES (2, NULL, DEFAULT, '2024-06-02 09:30:00', 2, 2, 'IN_PROGRESS');
+INSERT INTO user_workout_progress VALUES (3, '2024-06-03 10:15:00', DEFAULT, '2024-06-03 09:00:00', 1, 3, 'FINISHED');
+INSERT INTO user_workout_progress VALUES (1, NULL, DEFAULT, '2024-06-04 07:45:00', 3, 4, 'NOT_STARTED');
+INSERT INTO user_workout_progress VALUES (2, '2024-06-05 11:00:00', DEFAULT, '2024-06-05 10:00:00', 2, 2, 'FINISHED');
+INSERT INTO user_workout_progress VALUES (3, NULL, DEFAULT, '2024-06-06 12:30:00', 1, 6, 'IN_PROGRESS');
+INSERT INTO user_workout_progress VALUES (1, NULL, DEFAULT, '2024-06-07 13:00:00', 2, 3, 'NOT_STARTED');
+INSERT INTO user_workout_progress VALUES (2, '2024-06-08 14:45:00', DEFAULT, '2024-06-08 13:30:00', 3, 5, 'FINISHED');
+INSERT INTO user_workout_progress VALUES (3, NULL, DEFAULT, '2024-06-09 15:15:00', 2, 3, 'IN_PROGRESS');
+INSERT INTO user_workout_progress VALUES (1, NULL, DEFAULT, '2024-06-10 16:00:00', 1, 10, 'FINISHED');
